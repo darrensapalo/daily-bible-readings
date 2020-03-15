@@ -1,5 +1,5 @@
 import cheerio from 'cheerio';
-import {EMPTY, Observable, zip} from "rxjs";
+import {EMPTY, Observable, throwError, zip} from "rxjs";
 import {LiturgyOfWord, LiturgyOfWordSection} from "./interfaces";
 import {map, toArray} from "rxjs/operators";
 
@@ -51,21 +51,21 @@ export function structuredParse(text: string): Observable<LiturgyOfWord> {
 }
 
 export function parseFirstReading(text: string): Observable<LiturgyOfWordSection<"first_reading">> {
-  return EMPTY;
+  return throwError('Not Implemented');
 }
 
 export function parseResponsorialPsalm(text: string): Observable<LiturgyOfWordSection<"responsorial_psalm">> {
-  return EMPTY;
+  return throwError('Not Implemented');
 }
 
 export function parseSecondReading(text: string): Observable<LiturgyOfWordSection<"second_reading">> {
-  return EMPTY;
+  return throwError('Not Implemented');
 }
 
 export function parseGospelAcclamation(text: string): Observable<LiturgyOfWordSection<"gospel_acclamation">> {
-  return EMPTY;
+  return throwError('Not Implemented');
 }
 
 export function parseGospel(text: string): Observable<LiturgyOfWordSection<"gospel">> {
-  return EMPTY;
+  return throwError('Not Implemented');
 }
