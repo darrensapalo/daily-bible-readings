@@ -1,0 +1,26 @@
+{
+  "name": "olfp-presentations",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/main.ts",
+    "build": "npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/cheerio": "^0.22.16",
+    "@types/jest": "^25.1.4",
+    "@types/mocha": "^7.0.2",
+    "backslide": "^2.5.0",
+    "cheerio": "^1.0.0-rc.3",
+    "rxjs": "^6.5.4",
+    "ts-node": "^8.6.2"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0",
+    "typescript": "^3.8.3"
+  }
+}
