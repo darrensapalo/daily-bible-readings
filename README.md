@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/darrensapalo/daily-bible-readings.svg?branch=master)](https://travis-ci.org/darrensapalo/daily-bible-readings)
+
 # Daily Bible Readings
 
 This project allows you to automatically retrieve daily bible readings from USCCB and generates the readings into a PDF.
