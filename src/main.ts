@@ -1,18 +1,14 @@
-import {getUrl} from "./url";
-import {downloadPage} from "./download";
-import {map, mergeMap} from "rxjs/operators";
+import { concatMap, map } from "rxjs/operators";
+import { downloadPage } from "./download";
 import {
-  getScriptures,
-  removeFooterText,
-  removeRepetitiveNewlines, structuredParse
+  getScriptures
 } from "./parse";
+import { getUrl } from "./url";
 
 const url = getUrl(new Date());
 downloadPage(url)
   .pipe(
-    map(getScriptures),
-    map(removeFooterText),
-    map(removeRepetitiveNewlines),
+    concatMap(getScriptures),
     // mergeMap(structuredParse)
   )
   .subscribe(console.log, console.error);

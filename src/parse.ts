@@ -1,71 +1,65 @@
-import cheerio from 'cheerio';
-import {EMPTY, Observable, throwError, zip} from "rxjs";
-import {LiturgyOfWord, LiturgyOfWordSection} from "./interfaces";
-import {map, toArray} from "rxjs/operators";
+import cheerio from "cheerio";
+import { Observable } from "rxjs";
+import { Section, SectionType } from "./domain";
 
-export function getScriptures(html: string): string {
-  const $ = cheerio.load(html, {});
-  // noinspection SpellCheckingInspection
-  const text = $(".contentarea").text();
-  return text;
+/**
+ * 
+ * @param html The source contents of a page
+ * @returns An observable that emits scripture sections
+ */
+export function getScriptures(html: string): Observable<Section> {
+  return new Observable((subscriber) => {
+    const $ = cheerio.load(html, {});
+
+    let sections = $(".b-verse .innerblock");
+
+    console.log("Found sections", sections.length);
+
+    let sectionIndex = 0;
+
+    while (sectionIndex < sections.length) {
+      const section = sections[sectionIndex++];
+
+      console.log("currently at section index", sectionIndex);
+
+      let paragraphs = $(section).find(".content-body p");
+
+      if (paragraphs == null) {
+        throw new Error("Failed to find paragraphs on the page");
+      }
+
+      let paragraphIndex = 0;
+
+      let stringBuilder = "";
+
+      const result: Section = {
+        type: determineSection(section),
+        text: "",
+        reference: "",
+      };
+
+      while (paragraphIndex < paragraphs.length) {
+        const paragraph = paragraphs[paragraphIndex++];
+
+        const htmlFiltered = $(paragraph).html();
+
+        if (htmlFiltered == null) {
+          throw new Error("Failed to find paragraphs on the verse");
+        }
+
+        const processed = htmlFiltered.replace(/<br>/gi, " ");
+        const sub$ = cheerio.load(processed, {});
+        stringBuilder += sub$.text();
+      }
+
+      result.text = stringBuilder;
+      subscriber.next(result);
+    }
+
+    subscriber.complete();
+  });
 }
 
-export function removeFooterText(text: string): string {
-  text = text.replace(/Lectionary for Mass for Use in the Dioceses of the United States, second typical edition.*\n$/g, "");
-  text = text.replace(/Get the Daily Readings every morning$/g, "");
-  text = text.replace(/Name:/g, "");
-  text = text.replace(/Your email address:\*/g, "");
-  text = text.replace(/Privacy Terms\*/g, "");
-  text = text.replace(/I Agree that the data I provided to complete this.*\n/g, "");
-  text = text.replace(/Correct invalid entries.*\n/g, "");
-  text = text.replace(/Please enter all required fields.*\n/g, "");
-  text = text.replace(/Get the Daily Readings every morning.*\n/g, "");
-
-  return text;
-}
-
-export function removeRepetitiveNewlines(text: string): string {
-  text = text.replace(/\n\n/g, "");
-  text = text.replace(/\n\n/g, "");
-  return text;
-}
-
-export function structuredParse(text: string): Observable<LiturgyOfWord> {
-
-  const firstReadings = parseFirstReading(text).pipe(toArray());
-  const responsorialPsalms = parseResponsorialPsalm(text).pipe(toArray());
-  const secondReadings = parseSecondReading(text).pipe(toArray());
-  const gospelAcclamations = parseGospelAcclamation(text).pipe(toArray());
-  const gospels = parseGospel(text).pipe(toArray());
-
-  return zip(firstReadings, responsorialPsalms, secondReadings, gospelAcclamations, gospels).pipe(
-    map(result => ({
-      first_reading: result[0],
-      responsorial_psalm: result[1],
-      second_reading: result[2],
-      gospel_acclamation: result[3],
-      gospel: result[4]
-    }))
-  );
-
-}
-
-export function parseFirstReading(text: string): Observable<LiturgyOfWordSection<"first_reading">> {
-  return throwError('Not Implemented');
-}
-
-export function parseResponsorialPsalm(text: string): Observable<LiturgyOfWordSection<"responsorial_psalm">> {
-  return throwError('Not Implemented');
-}
-
-export function parseSecondReading(text: string): Observable<LiturgyOfWordSection<"second_reading">> {
-  return throwError('Not Implemented');
-}
-
-export function parseGospelAcclamation(text: string): Observable<LiturgyOfWordSection<"gospel_acclamation">> {
-  return throwError('Not Implemented');
-}
-
-export function parseGospel(text: string): Observable<LiturgyOfWordSection<"gospel">> {
-  return throwError('Not Implemented');
+export function determineSection(element: any): SectionType {
+  return "gospel";
 }
