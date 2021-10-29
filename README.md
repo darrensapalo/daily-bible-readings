@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/darrensapalo/daily-bible-readings.svg?branch=master)](https://travis-ci.org/darrensapalo/daily-bible-readings)
+![Build status](https://github.com/darrensapalo/daily-bible-readings/actions/workflows/build.yml/badge.svg)
+
 
 # Daily Bible Readings
 
